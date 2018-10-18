@@ -1,7 +1,7 @@
 library("COSINE")
 
 
-diff_gen_PPI <-
+diff_gen_PPI1 <-
   function(data1,data2,PPI,pvals=NULL){
     num_sample_1 <- dim(data1)[1]
     num_sample_2 <- dim(data2)[1]

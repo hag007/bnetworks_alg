@@ -46,7 +46,7 @@ library("foreach")
 library("Cairo") 
 library("AnnotationDbi")
 library('org.Rn.eg.db')
-source('/home/hag007/repos/bnetworks/r/scripts/ModuleDiscoverer.r') 
+source('/home/hag007/repos/bnetworks_alg/modulediscoverer/ModuleDiscoverer.r') 
 
 library('futile.matrix')
 library('mlxR')
@@ -54,23 +54,23 @@ library('mlxR')
 
 load('~/Desktop/Data.RData')
 
-A <- read.table(A.file, stringsAsFactors = F, header=F)
-A <- as.matrix(A)
-vlist <- read.delim(vlist.file)
-background <- scan(background.file, sep = "\n", what="character")
-proteins <- scan(proteins.file, sep = "\n", what="character")
-degs <- scan(degs.file, sep = "\n", what="character")
-degs.random.datasets1 <- read.delim(random.sets.file, stringsAsFactors = F, header=F)
-
-# A <- read.table("/home/hag007/bnet/datasets/TNFa_2/output/A", stringsAsFactors = F, header=F)
+# A <- read.table(A.file, stringsAsFactors = F, header=F)
 # A <- as.matrix(A)
-# vlist <- read.delim("/home/hag007/bnet/datasets/TNFa_2/output/vlist", colClasses=c('character', 'character', 'character'))
-# vlist <- as.matrix(vlist)
-# background <- scan("/home/hag007/bnet/datasets/TNFa_2/output/background",sep = "\n", what="character")
-# proteins <- scan("/home/hag007/bnet/datasets/TNFa_2/output/proteins",sep = "\n", what="character")
-# degs <- scan("/home/hag007/bnet/datasets/TNFa_2/output/degs",sep = "\n", what="character")
-# degs.random.datasets1 <- read.delim("/home/hag007/bnet/datasets/TNFa_2/output/random_sets", stringsAsFactors = F, header=F)
-# p.value = 0.01
+# vlist <- read.delim(vlist.file)
+# background <- scan(background.file, sep = "\n", what="character")
+# proteins <- scan(proteins.file, sep = "\n", what="character")
+# degs <- scan(degs.file, sep = "\n", what="character")
+# degs.random.datasets1 <- read.delim(random.sets.file, stringsAsFactors = F, header=F)
+
+A <- read.table("/home/hag007/bnet/datasets/TNFa_2/output/A", stringsAsFactors = F, header=F)
+A <- as.matrix(A)
+vlist <- read.delim("/home/hag007/bnet/datasets/TNFa_2/output/vlist", colClasses=c('character', 'character', 'character'))
+vlist <- as.matrix(vlist)
+background <- scan("/home/hag007/bnet/datasets/TNFa_2/output/background",sep = "\n", what="character")
+proteins <- scan("/home/hag007/bnet/datasets/TNFa_2/output/proteins",sep = "\n", what="character")
+degs <- scan("/home/hag007/bnet/datasets/TNFa_2/output/degs",sep = "\n", what="character")
+degs.random.datasets1 <- read.delim("/home/hag007/bnet/datasets/TNFa_2/output/random_sets", stringsAsFactors = F, header=F)
+p.value = 0.01
 
 i <- 1
 degs.random.datasets2 = rep(NA,nrow(degs.random.datasets1))
