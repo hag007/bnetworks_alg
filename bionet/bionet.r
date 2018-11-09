@@ -1,7 +1,11 @@
 library("Rgraphviz")
 library("BioNet")
 
-##load DIP ppi
+# network.file.name <- "/home/hag007/bnet/networks/dip.sif"
+# deg.file.name <- "/home/hag007/bnet/datasets/MCF7_2/cache/deg_edger.tsv"
+# fdr=0.05
+
+##load DIP ppita
 ig <- loadNetwork.sif(network.file.name)
 data <- read.delim(deg.file.name, sep="\t", stringsAsFactors=FALSE, row.names = 1)
 pval <- data[["pval"]]
@@ -12,8 +16,13 @@ subnet <- rmSelfLoops(subnet)
 
 pval <-na.omit(pval)
 # pval <- pval[!pval==1]
-fb <- fitBumModel(pval, plot = TRUE, starts = 10)
-scores <- scoreNodes(subnet, fb, fdr = .05) #0.9999999999
+if (is.pval.score){
+	pval[pval < 1e-150] <- 1e-150
+	fb <- fitBumModel(pval, plot = FALSE, starts = 10)
+	scores <- scoreNodes(subnet, fb, fdr = fdr)
+} else{
+	scores <- pval
+}
 # scores = -log10(pval)
 module <- runFastHeinz(subnet, scores)
 # logFC <- dataLym$diff
