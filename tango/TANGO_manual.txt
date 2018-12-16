@@ -1,0 +1,183 @@
+
+Using the TANGO program
+----------------------
+
+TANGO is a program for functional annotation of gene sets. It uses pre-processed
+tables of genes and their GO annotation, and perform hyper-geometric enrichment
+tests for sets of genes with common annotation and sets of genes given as input.
+Importantly, TANGO correct for multiple testing at both the multiple GO classes 
+and multiple tested sets levels. It does so by bootstrapping and estimating the
+empirical p-value distribution for the evaluated sets.
+
+TANGO is a standalone program available for Linux and Windows. Precompiled
+annotation tables are available through the Expander system. See 
+www.cs.tau.ac.il:~amos for downloading the current version.
+
+1.Running TANGO
+------------
+
+You should run TANGO like this:
+
+TANGO parameter_file
+
+TANGO will read files as specified in the parameter file and will write its
+output to yet another file (that is specified in the param file..). Below
+you'll find a description of the files and parameters.
+
+2.Precompiled annotation files
+----------------------------
+
+TANGO use preprocessed GO annotation files to map genes and known annotations.
+All files are tab delimited text files. A set of tables always describe
+the annotation of a single organism.
+
+varob.txt - mapping variable internal ids with external gene identifiers (ORF, Locuslink etc)
+
+Field 0: Internal variable id (Number)
+Field 1: Variable Name (String)
+Field 2: Variable External Key (String)
+
+Example line:
+21043	TP53	7157
+
+goclskey.txt - key file containing the names of all annotation categories. 
+Typically, each category reflects one GO attribute, and the gene associated
+with it are all genes that are annotated with this attribute, or with an attribute
+that specialize it.
+
+Field 0: Internal annotation category id
+Field 1: GO id (or any external id for the annotation source)
+Field 2: Category name
+Field 3: Number of genes annotated with this category (not used by TANGO)
+
+Example line:
+0	GO:0008289	lipid binding	15
+
+clsassoc.txt - this table associate variable internal ids (key to varob.txt)
+
+Field 0: Category id (key to goclskey)
+Field 1: Gene id (key to varob)
+
+
+3.TANGO Input files
+----------------
+
+TANGO process two input files. One define the set of genes that should be
+consider as the background. Typically this set can include the entire genome,
+or only the genes that where printed on the chip that was used to 
+generate the clusters/biclusters, or only the genes that survived the
+filtering that precede the analysis that generated the clusters. The second
+file define the actual sets (clusters/biclusters) to annotate.
+
+chip.txt - define the background set
+
+Field 0: Gene external key (points to field 2 in the varob table). In other
+words - a list of locuslink ids (mammals), orf codes (yeast), flybase ids
+(fly) etc.
+
+sets.txt - define the sets to annotate
+
+Field 0: Gene external key (points to field 2 in the varob table)
+Field 1: Set Id (serial number for the sets to annotate)
+
+Example:
+
+YOR348C	0
+YPL265W	0
+YPL274W	0
+YAL067C	1
+YBL042C	1
+YBR021W	1
+
+Define 2 sets of yeast genes, each with 3 genes.
+
+4.TANGO output file
+------------------
+
+TANGO generate a tab delimited text file including all significant annotations.
+The format is as follows:
+
+Field 0: set id (key to sets.txt)
+Field 1: annotation name (name from goclskey)
+Field 2: uncorrected hyper-geometric p-value (log10)
+Field 3: Corrected hyper-geometric p-value (log10)
+Field 4: fraction of genes in the set annotated with the category 
+Field 5: number of genes in the set annotated with the category
+Field 6: category external id (field 1 in goclskey)
+
+5.TANGO Parameter file
+-------------------
+
+TANGO comes with a parameter files that controls the input files it 
+uses, as well as important parameters. The file is formated as an INI file - 
+including "scopes" (bracket delimited names in their own lines) and "options"
+(assignments of values to parameter in the format options=value). The
+ordering of options is not important as long as each option is below
+its appropriate scope.
+
+Here is an example of the parameter file, explanations are below:
+
+#file starts here
+[Random]
+Seed=19
+[Tables]
+varob=/data/yeast/varob.txt
+goclskey=/data/yeast/annots/go/goclskey.txt
+clsassoc=/data/yeast/annots/go/clsassoc.txt
+
+ChipOrfs=chip.txt
+SetsOrfs=sets.txt
+
+AnnotReport=annots.txt
+
+[TANGO]
+BootstrapNum = 1000
+
+MinClsSize=5
+MaxClsSize=1000
+MinClsInter=4
+MaxPvToRep=0.01
+FilterRedPVThres = 0.05
+#file ends here
+
+Random::Seed - control the pseudo-random sequence used for bootstraping.
+Runnig TANGO twice with the same seed and same data will generate the SAME
+results.
+
+Tables::varob - the full path of the varob file (see section 2)
+Tables::goclskey - the full path of the goclskey file (see section 2)
+Tables::ChipOrfs - the full path of the chip.txt file (see section 3)
+Tables::SetsOrfs - the full path of the sets.txt file (see section 3)
+
+Tables::AnnotReport - the TANGO output file (see section 4)
+
+TANGO::BootstrapNum - number of bootstraps to perform. The corrected pvalue
+will always be larger or equal 1/BoostrapNum, but since the output
+report provide the uncorrected value as well as the corrected one, using
+1000 should be generally enough. This value linearly affect the running 
+time of the program (naturally), so use it carefully.
+
+TANGO::MinClsSize - the minimal size of category to consider for annotation.
+Categories that have less annotated genes than this number will not be
+considered. Use this to save time and reduce the abundance of spurious results.
+
+TANGO::MaxClsSize - the maximal size of category to consider for annotation.
+Categories that have more annotated genes than this number will not be
+considered. Use this to prevent very general annotation (e.g., metabolism..).
+
+TANGO::MinClsInter - the minimal number of genes that are annotated with
+the category and are part of the annotated set to be consider for annotation.
+Setting this to 0 will allow annotation using a single gene, which are prone
+to false positives. Although these will be corrected by the bootstrap
+procedure, we recommend to prevent these to increase the statistical power.
+
+TANGO::MaxPvToRep - the maximal p-value (uncorrected) to report on.
+
+TANGO::FilteredPVThres - the maximal conditional p-value to consider when
+filtering annotations of the same set. TANGO filter results by performing
+conditional hyper-geometric tests for one category, assuming the observed
+enrichment in the other. Whenever this conditional p-value is higher than
+the threshold set by this parameter, TANGO will remove the weaker annotation
+of the two.
+
+

@@ -1,9 +1,10 @@
 library("Rgraphviz")
 library("BioNet")
 
-# network.file.name <- "/home/hag007/bnet/networks/dip.sif"
-# deg.file.name <- "/home/hag007/bnet/datasets/MCF7_2/cache/deg_edger.tsv"
+# network.file.name <- "/media/hag007/Data/bnet/networks/dip.sif"
+# deg.file.name <- "/media/hag007/Data/bnet/datasets/GWAS_2hr_glucose/data/score.tsv"
 # fdr=0.05
+# is.pval.score=T
 
 ##load DIP ppita
 ig <- loadNetwork.sif(network.file.name)
@@ -23,10 +24,15 @@ if (is.pval.score){
 } else{
 	scores <- pval
 }
-# scores = -log10(pval)
-module <- runFastHeinz(subnet, scores)
-# logFC <- dataLym$diff
-# names(logFC) <- dataLym$label
-# plotModule(module, scores = scores) # , diff.expr = logFC
-module.genes <- nodes(module)
+
+if (max(scores)<0){
+  module.genes=list()  
+} else {
+  # scores = -log10(pval)
+  module <- runFastHeinz(subnet, scores)
+  # logFC <- dataLym$diff
+  # names(logFC) <- dataLym$label
+  # plotModule(module, scores = scores) # , diff.expr = logFC
+  module.genes <- nodes(module)
+}
 bg.genes <- nodes(subnet)
