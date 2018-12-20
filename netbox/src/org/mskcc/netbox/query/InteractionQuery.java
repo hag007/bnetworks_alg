@@ -31,10 +31,10 @@ public final class InteractionQuery {
 
 
 	static {
-		globalInteractionList= new ArrayList<>(); 
-				
+		globalInteractionList= new ArrayList<>();
+
 		try {
-		String fname = "/media/hag007/Data/bnet/networks/dip.sif";
+		String fname = "/specific/netapp5/gaga/hagailevi/evaluation/bnet/networks/dip.sif";
 		FileReader fr = new FileReader(fname);
 		BufferedReader br = new BufferedReader(fr);
 		String line;
