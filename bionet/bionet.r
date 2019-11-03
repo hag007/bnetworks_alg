@@ -2,9 +2,8 @@ library("Rgraphviz")
 library("BioNet")
 
 # network.file.name <- "/media/hag007/Data/bnet/networks/dip.sif"
-# deg.file.name <- "/media/hag007/Data/bnet/datasets/GWAS_2hr_glucose/data/score.tsv"
+# deg.file.name <- "/media/hag007/Data/bnet/datasets/GE_ROR_3/cache/deg_edger.tsv"
 # fdr=0.05
-# is.pval.score=T
 
 ##load DIP ppita
 ig <- loadNetwork.sif(network.file.name)
@@ -19,7 +18,7 @@ pval <-na.omit(pval)
 # pval <- pval[!pval==1]
 if (is.pval.score){
 	pval[pval < 1e-150] <- 1e-150
-	fb <- fitBumModel(pval, plot = FALSE, starts = 10)
+	fb <- fitBumModel(pval, plot = TRUE, starts = 10)
 	scores <- scoreNodes(subnet, fb, fdr = fdr)
 } else{
 	scores <- pval

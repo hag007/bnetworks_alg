@@ -34,7 +34,7 @@ public final class InteractionQuery {
 		globalInteractionList= new ArrayList<>();
 
 		try {
-		String fname = "/specific/netapp5/gaga/hagailevi/evaluation/bnet/networks/dip.sif";
+		String fname = "/home/hag007/bnet/networks/dip.sif";
 		FileReader fr = new FileReader(fname);
 		BufferedReader br = new BufferedReader(fr);
 		String line;

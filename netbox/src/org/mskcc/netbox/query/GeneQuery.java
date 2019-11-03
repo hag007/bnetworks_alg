@@ -31,7 +31,7 @@ public final class GeneQuery {
 	static {
 
 		try {
-			String fname = "/specific/netapp5/gaga/hagailevi/evaluation/bnet/dictionaries/ensembl2gene_symbol.txt";
+			String fname = "/home/hag007/bnet/dictionaries/ensembl2gene_symbol.txt";
 			FileReader fr = new FileReader(fname);
 			BufferedReader br = new BufferedReader(fr);
 			String line=br.readLine();
