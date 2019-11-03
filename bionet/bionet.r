@@ -1,5 +1,5 @@
-library("Rgraphviz")
-library("BioNet")
+library("Rgraphviz", lib.loc  = "/specific/netapp5/gaga/hagailevi/evaluation/Renv")
+library("BioNet", lib.loc  = "/specific/netapp5/gaga/hagailevi/evaluation/Renv")
 
 # network.file.name <- "/media/hag007/Data/bnet/networks/dip.sif"
 # deg.file.name <- "/media/hag007/Data/bnet/datasets/GE_ROR_3/cache/deg_edger.tsv"
